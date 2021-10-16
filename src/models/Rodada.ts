@@ -22,6 +22,10 @@ export default class Rodada {
     return this.jogos.find((jogo) => jogo.getId() === jogoId);
   }
 
+  public getNumeroRodada() {
+    return this.numeroRodada;
+  }
+
   public getHorarioLimiteAposta(): Date {
     return this.jogos
       .reduce((acc, cur) => (acc < cur ? acc : cur))

@@ -2,9 +2,14 @@ import Rodada from "./Rodada";
 import ApostaJogo, { Palpite } from "./ApostaJogo";
 import ApostaRodada from "./ApostaRodada";
 
+export type UsuarioFile = {
+  nome: string;
+  senha: string;
+  email: string;
+};
 export default class Usuario {
   protected nome: string;
-  protected senha: string
+  protected senha: string;
   protected readonly email: string;
 
   public constructor(nome: string, email: string, senha: string) {
@@ -25,12 +30,12 @@ export default class Usuario {
     return this.email;
   }
 
-  public getSenha(){
-    return this.senha
+  public getSenha() {
+    return this.senha;
   }
 
-  public setSenha(senha: string){
-    this.senha = senha
+  public setSenha(senha: string) {
+    this.senha = senha;
   }
 
   public aposta(rodada: Rodada, palpites: Palpite[]): ApostaRodada {
@@ -42,6 +47,6 @@ export default class Usuario {
         palpite.golsVisitante
       );
     });
-    return new ApostaRodada(this, listaJogos);
+    return new ApostaRodada(this, listaJogos, rodada.getNumeroRodada());
   }
 }

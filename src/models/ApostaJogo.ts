@@ -26,6 +26,19 @@ export default class ApostaJogo {
     this.golsVisitante = golsVisitante;
   }
 
+  getusuario() {
+    return this.usuario;
+  }
+  getjogo() {
+    return this.jogo;
+  }
+  getgolsMandante() {
+    return this.golsMandante;
+  }
+  getgolsVisitante() {
+    return this.golsVisitante;
+  }
+
   public atualizaPontuacao(): number {
     let pontos = 0;
     if (this.golsMandante === this.jogo.getGolsMandante()) {

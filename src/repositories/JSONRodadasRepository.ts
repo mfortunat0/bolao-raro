@@ -9,26 +9,31 @@ import RodadasRepository, {
 const RODADAS_FILE_PATH = join(__dirname, "../../files/rodadas.json");
 
 export default class JSONRodadasRepository implements RodadasRepository {
-  private rodadasFilePath: string;
-
-  public constructor() {
-    this.rodadasFilePath = RODADAS_FILE_PATH;
-  }
-  public findAll(): Rodada[] {
+  public findAll(): Promise<Rodada[]> {
     const fileContent: Rodada[] = JSON.parse(
-      readFileSync(this.rodadasFilePath).toString()
+      readFileSync(RODADAS_FILE_PATH).toString()
     );
-    return fileContent;
+    return Promise.resolve(fileContent);
+  }
+
+  public findByNumeroRodada(numeroRodada: number): Promise<Rodada> {
+    const fileContent: Rodada[] = JSON.parse(
+      readFileSync(RODADAS_FILE_PATH).toString()
+    );
+    const rodada = fileContent.find(
+      (rodada) => rodada.getNumeroRodada() === numeroRodada
+    );
+    return Promise.resolve(rodada);
   }
 
   public save(rodadas: Rodada[]): void {
     try {
       const fileContent = JSON.stringify(rodadas);
-      writeFileSync(this.rodadasFilePath, fileContent);
+      writeFileSync(RODADAS_FILE_PATH, fileContent);
     } catch (error) {
       if (error instanceof error) {
         throw new Error(
-          `Erro ao tentar escrever no arquivo ${this.rodadasFilePath}, motivo ${error}`
+          `Erro ao tentar escrever no arquivo ${RODADAS_FILE_PATH}, motivo ${error}`
         );
       } else {
         throw error;
@@ -38,10 +43,10 @@ export default class JSONRodadasRepository implements RodadasRepository {
 
   public saveAsync(rodadas: Rodada[], callback: SaveCallback) {
     const fileContent = JSON.stringify(rodadas);
-    writeFile(this.rodadasFilePath, fileContent, (error) => {
+    writeFile(RODADAS_FILE_PATH, fileContent, (error) => {
       if (error) {
         const fileError = new Error(
-          `Erro ao tentar escrever no arquivo ${this.rodadasFilePath}, motivo ${error}`
+          `Erro ao tentar escrever no arquivo ${RODADAS_FILE_PATH}, motivo ${error}`
         );
         callback(fileError);
       } else {
@@ -51,10 +56,10 @@ export default class JSONRodadasRepository implements RodadasRepository {
   }
 
   public findAllAsync(callback: FindAllCallback) {
-    readFile(this.rodadasFilePath, (error, fileContent) => {
+    readFile(RODADAS_FILE_PATH, (error, fileContent) => {
       if (error) {
         const fileError = new Error(
-          `Erro ao tentar ler o arquivo ${this.rodadasFilePath}, motivo ${error}`
+          `Erro ao tentar ler o arquivo ${RODADAS_FILE_PATH}, motivo ${error}`
         );
         callback(fileError, null);
       } else {

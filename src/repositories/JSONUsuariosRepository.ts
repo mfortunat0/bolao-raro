@@ -1,6 +1,6 @@
 import Usuario from "../models/Usuario";
 import UsuariosRepository from "./UsuariosRepository";
-import { readFile } from "fs";
+import { readFile, writeFile } from "fs/promises";
 
 const USUARIOS_FILE_PATH = "./files/usuarios.json";
 
@@ -11,39 +11,81 @@ type UsuarioFile = {
 };
 
 export default class JSONUsuariosRepository implements UsuariosRepository {
-
   private usuariosFilePath: string;
 
   constructor(outrosUsuarios?: string) {
     this.usuariosFilePath = outrosUsuarios || USUARIOS_FILE_PATH;
   }
 
-  // --- Recupera todos
-
-  public findAll(): Promise<Usuario[]> {
-    // @todo
-    return Promise.reject("Não implementado");
+  public async findAll(): Promise<Usuario[]> {
+    return readFile(this.usuariosFilePath).then((data) => {
+      const fileContent = JSON.parse(data.toString()) as UsuarioFile[];
+      const usuarios = fileContent.map((usuario) => {
+        const nome = usuario.nome;
+        const email = usuario.email;
+        const senha = usuario.senha;
+        return new Usuario(nome, email, senha);
+      });
+      return usuarios;
+    });
   }
 
-  // --- Encontra um usuario pelo seu email
-
-  public findByEmail(email: string): Promise<Usuario> {
-    // @todo
-    return Promise.reject("Não implementado");
+  public async findByEmail(email: string): Promise<Usuario> {
+    try {
+      const usuarios = await this.findAll();
+      const result = usuarios.find((usuario) => usuario.getEmail() === email);
+      if (!result) {
+        throw new Error(`Usuario não existente`);
+      }
+      return result;
+    } catch (error) {
+      throw new Error(`Algo deu errado. Motivo: ${error.message}`);
+    }
   }
 
-  // --- Remove um usuario pelo seu email
-
-  public remove(email: string): Promise<void> {
-    // @todo
-    return Promise.reject("Não implementado");
+  public async remove(email: string): Promise<void> {
+    try {
+      const usuarios = await this.findAll();
+      const result = usuarios.filter((usuario) => usuario.getEmail() !== email);
+      if (!result) {
+        throw new Error(`Usuario não existente`);
+      }
+      await this.save(result);
+    } catch (error) {
+      throw new Error(`Algo deu errado. Motivo: ${error.message}`);
+    }
   }
 
-  // --- Atualiza um usuario
-
-  public update(usuario: Usuario): Promise<void> {
-    // @todo
-    return Promise.reject("Não implementado");
+  public async update(oldUsuario: Usuario): Promise<void> {
+    try {
+      const usuarios = await this.findAll();
+      const result = usuarios.map((usuario) => {
+        if (oldUsuario.getEmail() === usuario.getEmail()) {
+          const updatedNome = usuario.getNome();
+          const updatedSenha = usuario.getSenha();
+          const email = usuario.getEmail();
+          return new Usuario(updatedNome, email, updatedSenha);
+        } else {
+          return usuario;
+        }
+      });
+      await this.save(result);
+    } catch (error) {
+      throw new Error(`Algo deu errado. Motivo: ${error.message}`);
+    }
   }
 
+  public async save(usuarios: Usuario[]): Promise<void> {
+    return writeFile(this.usuariosFilePath, JSON.stringify(usuarios)).catch(
+      (error: any) => {
+        if (error instanceof Error) {
+          throw new Error(
+            `Falha ao salvar os uusarios. Motivo: ${error.message}`
+          );
+        } else {
+          throw error;
+        }
+      }
+    );
+  }
 }

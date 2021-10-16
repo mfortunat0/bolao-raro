@@ -5,14 +5,13 @@ import Time from "./src/models/Time";
 import Jogo from "./src/models/Jogo";
 import Rodada from "./src/models/Rodada";
 import ApostaRodada from "./src/models/ApostaRodada";
-import ApostaJogo, { Palpite } from "./src/models/ApostaJogo";
+import { Palpite } from "./src/models/ApostaJogo";
 
 import JSONApostaRodadasRepository from "./src/repositories/JSONApostaRodadasRepository";
 import JSONRodadasRepository from "./src/repositories/JSONRodadasRepository";
 import JSONTimesRepository from "./src/repositories/JSONTimesRepository";
 import JSONUsuariosRepository from "./src/repositories/JSONUsuariosRepository";
 
-// NOME_TIME_MANDANTE GOLS_MANDANTE x GOLS_VISITANTE NOME_TIME_VISITANTE
 const usuariosRepository = new JSONUsuariosRepository();
 const timesRepository = new JSONTimesRepository();
 const rodadaRepository = new JSONRodadasRepository();
@@ -33,15 +32,27 @@ function getRodadaByPalpites(
   rodada: Rodada,
   palpites: Palpite[]
 ): ApostaRodada {
-  // @todo implementar a construção da ApostaRodada de maneira adequada /
-  // exercicios da semana 2 teve um exemplo na revisão feita na semana 3)
-  return new ApostaRodada();
+  return usuario.aposta(rodada, palpites);
 }
 
 function getMensagemAposta(apostaRodada: ApostaRodada): string {
-  // NOME_TIME_MANDANTE GOLS_MANDANTE x GOLS_VISITANTE NOME_TIME_VISITANTE
-  // retornar conforme o formato detalhado acima, separando cada jogo com uma nova linha
-  return "";
+  const formatted = apostaRodada
+    .getApostasJogos()
+    .reduce((acc, prev, index) => {
+      const nameMandante = prev.getjogo().getMandante().getNome();
+      const nameVisitante = prev.getjogo().getVisitante().getNome();
+      const golsMandante = prev.getgolsMandante();
+      const golsVisitante = prev.getgolsVisitante();
+      if (index === 0) {
+        return `${nameMandante} ${golsMandante} x ${golsVisitante} ${nameVisitante} \n`;
+      } else {
+        return (
+          acc +
+          `${nameMandante} ${golsMandante} x ${golsVisitante} ${nameVisitante} \n`
+        );
+      }
+    }, "");
+  return formatted;
 }
 
 async function teste(login: Login, numeroRodada: number, palpites: Palpite[]) {
