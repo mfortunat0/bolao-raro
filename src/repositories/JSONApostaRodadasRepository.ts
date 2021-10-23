@@ -44,7 +44,7 @@ export default class JSONApostaRodadasRepository
         });
         return apostaRodadas;
       })
-      .catch((error: any) => {
+      .catch((error) => {
         if (error instanceof Error) {
           throw new Error(
             `Falha ao carregar as Apostas das Rodadas. Motivo: ${error.message}`
@@ -71,7 +71,10 @@ export default class JSONApostaRodadasRepository
       }
       return result;
     } catch (error) {
-      throw new Error(`Algo deu errado. Motivo: ${error.message}`);
+      if (error instanceof Error) {
+        throw new Error(`Algo deu errado. Motivo: ${error.message}`);
+      }
+      throw error;
     }
   }
 
@@ -88,7 +91,11 @@ export default class JSONApostaRodadasRepository
       }
       return result;
     } catch (error) {
-      throw new Error(`Algo deu errado. Motivo: ${error.message}`);
+      if (error instanceof Error) {
+        throw new Error(`Algo deu errado. Motivo: ${error.message}`);
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -103,21 +110,26 @@ export default class JSONApostaRodadasRepository
       }
       return result;
     } catch (error) {
-      throw new Error(`Algo deu errado. Motivo: ${error.message}`);
+      if (error instanceof Error) {
+        throw new Error(`Algo deu errado. Motivo: ${error.message}`);
+      } else {
+        throw error;
+      }
     }
   }
 
   public async save(apostaRodada: ApostaRodada): Promise<void> {
-    writeFile(this.apostaRodadaFilePath, JSON.stringify(apostaRodada)).catch(
-      (error: any) => {
-        if (error instanceof Error) {
-          throw new Error(
-            `Falha ao salvar as Apostas das Rodadas. Motivo: ${error.message}`
-          );
-        } else {
-          throw error;
-        }
+    return writeFile(
+      this.apostaRodadaFilePath,
+      JSON.stringify(apostaRodada)
+    ).catch((error) => {
+      if (error instanceof Error) {
+        throw new Error(
+          `Falha ao salvar as Apostas das Rodadas. Motivo: ${error.message}`
+        );
+      } else {
+        throw error;
       }
-    );
+    });
   }
 }

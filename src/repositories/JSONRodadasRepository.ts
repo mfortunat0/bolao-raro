@@ -12,14 +12,14 @@ export default class JSONRodadasRepository implements RodadasRepository {
   public findAll(): Promise<Rodada[]> {
     const fileContent: Rodada[] = JSON.parse(
       readFileSync(RODADAS_FILE_PATH).toString()
-    );
+    ) as Rodada[];
     return Promise.resolve(fileContent);
   }
 
   public findByNumeroRodada(numeroRodada: number): Promise<Rodada> {
     const fileContent: Rodada[] = JSON.parse(
       readFileSync(RODADAS_FILE_PATH).toString()
-    );
+    ) as Rodada[];
     const rodada = fileContent.find(
       (rodada) => rodada.getNumeroRodada() === numeroRodada
     );
@@ -31,9 +31,9 @@ export default class JSONRodadasRepository implements RodadasRepository {
       const fileContent = JSON.stringify(rodadas);
       writeFileSync(RODADAS_FILE_PATH, fileContent);
     } catch (error) {
-      if (error instanceof error) {
+      if (error instanceof Error) {
         throw new Error(
-          `Erro ao tentar escrever no arquivo ${RODADAS_FILE_PATH}, motivo ${error}`
+          `Erro ao tentar escrever no arquivo ${RODADAS_FILE_PATH}, motivo ${error.message}`
         );
       } else {
         throw error;
@@ -46,7 +46,7 @@ export default class JSONRodadasRepository implements RodadasRepository {
     writeFile(RODADAS_FILE_PATH, fileContent, (error) => {
       if (error) {
         const fileError = new Error(
-          `Erro ao tentar escrever no arquivo ${RODADAS_FILE_PATH}, motivo ${error}`
+          `Erro ao tentar escrever no arquivo ${RODADAS_FILE_PATH}, motivo ${error.message}`
         );
         callback(fileError);
       } else {
@@ -59,7 +59,7 @@ export default class JSONRodadasRepository implements RodadasRepository {
     readFile(RODADAS_FILE_PATH, (error, fileContent) => {
       if (error) {
         const fileError = new Error(
-          `Erro ao tentar ler o arquivo ${RODADAS_FILE_PATH}, motivo ${error}`
+          `Erro ao tentar ler o arquivo ${RODADAS_FILE_PATH}, motivo ${error.message}`
         );
         callback(fileError, null);
       } else {

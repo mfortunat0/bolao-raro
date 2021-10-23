@@ -2,6 +2,7 @@ import Time from "../models/Time";
 import TimesRepository, { FindAllCallback } from "./TimesRepository";
 import { readFile, readFileSync } from "fs";
 import { join } from "path";
+import { writeFile } from "fs/promises";
 
 const TIMES_FILE_PATH = join(__dirname, "../../files/times.json");
 
@@ -52,5 +53,9 @@ export default class JSONTimesRepository implements TimesRepository {
 
       callback(null, timesComClasse);
     });
+  }
+
+  public save(times: Time[]) {
+    return writeFile(TIMES_FILE_PATH, JSON.stringify(times));
   }
 }

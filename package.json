@@ -1,5 +1,5 @@
 {
-  "name": "semana2",
+  "name": "semana5",
   "version": "1.0.0",
   "description": "Geometric Figures",
   "main": "build/index.js",
@@ -25,5 +25,8 @@
     "prettier": "^2.4.1",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "axios": "^0.23.0"
   }
 }
