@@ -7,7 +7,7 @@ import Time from "../models/Time";
 import Rodada from "../models/Rodada";
 import JSONTimesRepository from "../repositories/JSONTimesRepository";
 
-class BrasileiraoService {
+export class BrasileiraoService {
   private readonly rodadaRepository: RodadaRepository =
     new JSONRodadasRepository();
   private readonly timesRepository: TimesRepository = new JSONTimesRepository();
@@ -55,6 +55,3 @@ class BrasileiraoService {
     this.timesRepository.save(times);
   }
 }
-
-const test = new BrasileiraoService();
-test.saveRodada().catch((error) => console.log(error));

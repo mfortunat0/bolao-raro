@@ -43,16 +43,7 @@ export class BrasileiraoClient {
           Authorization: `bearer ${this.token}`,
         },
       })
-      .then((response) => response.data)
-      .catch((error) => {
-        if (error instanceof Error) {
-          throw new Error(
-            `Falha ao acessar a API do brasileirão. Motivo: ${error.message}`
-          );
-        } else {
-          throw error;
-        }
-      });
+      .then((response) => response.data);
   }
 
   getRodadas(): Promise<unknown> {
@@ -62,16 +53,7 @@ export class BrasileiraoClient {
           Authorization: `bearer ${this.token}`,
         },
       })
-      .then((response) => response.data)
-      .catch((error) => {
-        if (error instanceof Error) {
-          throw new Error(
-            `Falha ao acessar a API do brasileirão. Motivo: ${error.message}`
-          );
-        } else {
-          throw error;
-        }
-      });
+      .then((response) => response.data);
   }
 
   getRodadaByNumeroRodada(numeroRodada: number): Promise<RodadaDto> {
@@ -81,15 +63,6 @@ export class BrasileiraoClient {
           Authorization: `bearer ${this.token}`,
         },
       })
-      .then((response) => response.data)
-      .catch((error) => {
-        if (error instanceof Error) {
-          throw new Error(
-            `Falha ao acessar a API do brasileirão. Motivo: ${error.message}`
-          );
-        } else {
-          throw error;
-        }
-      });
+      .then((response) => response.data);
   }
 }
