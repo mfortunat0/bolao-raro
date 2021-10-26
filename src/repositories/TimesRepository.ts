@@ -3,7 +3,8 @@ import Time from "../models/Time";
 export type FindAllCallback = (error: Error, times: Time[]) => void;
 
 export default interface TimesRepository {
-  findAll(): Time[];
-  findAllAsync(callback: FindAllCallback): void;
-  save(time: Time[]): void;
+  findAll(): Promise<Time[]>;
+  findById(id: number): Promise<Time>;
+  update(time: Time): Promise<void>;
+  save(times: Time[]): Promise<void>;
 }

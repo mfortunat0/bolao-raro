@@ -5,5 +5,4 @@ export default interface UsuarioRepository {
   findByEmail(email: string): Promise<Usuario>;
   remove(email: string): Promise<void>;
   update(usuario: Usuario): Promise<void>;
-  save(usuarios: Usuario[]): Promise<void>;
 }

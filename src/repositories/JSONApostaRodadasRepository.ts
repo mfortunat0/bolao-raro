@@ -23,113 +23,69 @@ export default class JSONApostaRodadasRepository
   }
 
   public async findAll(): Promise<ApostaRodada[]> {
-    return readFile(this.apostaRodadaFilePath)
-      .then((data) => {
-        const fileContent = JSON.parse(data.toString()) as ApostaRodadaFile[];
-        const apostaRodadas = fileContent.map((apostaRodada) => {
-          const nome = apostaRodada.usuario.nome;
-          const email = apostaRodada.usuario.email;
-          const senha = apostaRodada.usuario.senha;
-          const usuario = new Usuario(nome, email, senha);
-          const numeroRodada = apostaRodada.numeroRodada;
-          const apostaJogos = apostaRodada.apostasJogos.map((apostaJogo) => {
-            return new ApostaJogo(
-              usuario,
-              apostaJogo.getjogo(),
-              apostaJogo.getgolsMandante(),
-              apostaJogo.getgolsVisitante()
-            );
-          });
-          return new ApostaRodada(usuario, apostaJogos, numeroRodada);
-        });
-        return apostaRodadas;
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          throw new Error(
-            `Falha ao carregar as Apostas das Rodadas. Motivo: ${error.message}`
+    return await readFile(this.apostaRodadaFilePath).then((data) => {
+      const fileContent = JSON.parse(data.toString()) as ApostaRodadaFile[];
+      const apostaRodadas = fileContent.map((apostaRodada) => {
+        const nome = apostaRodada.usuario.nome;
+        const email = apostaRodada.usuario.email;
+        const senha = apostaRodada.usuario.senha;
+        const usuario = new Usuario(nome, email, senha);
+        const numeroRodada = apostaRodada.numeroRodada;
+        const apostaJogos = apostaRodada.apostasJogos.map((apostaJogo) => {
+          return new ApostaJogo(
+            usuario,
+            apostaJogo.getjogo(),
+            apostaJogo.getgolsMandante(),
+            apostaJogo.getgolsVisitante()
           );
-        } else {
-          throw error;
-        }
+        });
+        return new ApostaRodada(usuario, apostaJogos, numeroRodada);
       });
+      return apostaRodadas;
+    });
   }
 
   public async findByNumeroRodadaEUsuario(
     numeroRodada: number,
     emailUsuario: string
   ): Promise<ApostaRodada> {
-    try {
-      const rodadas = await this.findAll();
-      const result = rodadas.find(
-        (rodada) =>
-          rodada.getUsuario().getEmail() === emailUsuario &&
-          rodada.getNumeroRodada() === numeroRodada
-      );
-      if (!result) {
-        throw new Error(`Rodada não existente`);
-      }
-      return result;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Algo deu errado. Motivo: ${error.message}`);
-      }
-      throw error;
+    const rodadas = await this.findAll();
+    const result = rodadas.find(
+      (rodada) =>
+        rodada.getUsuario().getEmail() === emailUsuario &&
+        rodada.getNumeroRodada() === numeroRodada
+    );
+    if (!result) {
+      throw new Error(`Rodada não existente`);
     }
+    return result;
   }
 
   public async findByNumeroRodada(
     numeroRodada: number
   ): Promise<ApostaRodada[]> {
-    try {
-      const rodadas = await this.findAll();
-      const result = rodadas.filter(
-        (rodada) => rodada.getNumeroRodada() === numeroRodada
-      );
-      if (result.length === 0) {
-        throw new Error("Rodada não existente");
-      }
-      return result;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Algo deu errado. Motivo: ${error.message}`);
-      } else {
-        throw error;
-      }
-    }
+    const rodadas = await this.findAll();
+    const result = rodadas.filter(
+      (rodada) => rodada.getNumeroRodada() === numeroRodada
+    );
+    return result;
   }
 
   public async findByUsuario(emailUsuario: string): Promise<ApostaRodada[]> {
-    try {
-      const rodadas = await this.findAll();
-      const result = rodadas.filter(
-        (rodada) => rodada.getUsuario().getEmail() === emailUsuario
-      );
-      if (result.length === 0) {
-        throw new Error(`Nao existe apostas para o email ${emailUsuario}`);
-      }
-      return result;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Algo deu errado. Motivo: ${error.message}`);
-      } else {
-        throw error;
-      }
+    const rodadas = await this.findAll();
+    const result = rodadas.filter(
+      (rodada) => rodada.getUsuario().getEmail() === emailUsuario
+    );
+    if (result.length === 0) {
+      throw new Error(`Nao existe apostas para o email ${emailUsuario}`);
     }
+    return result;
   }
 
   public async save(apostaRodada: ApostaRodada): Promise<void> {
-    return writeFile(
+    return await writeFile(
       this.apostaRodadaFilePath,
       JSON.stringify(apostaRodada)
-    ).catch((error) => {
-      if (error instanceof Error) {
-        throw new Error(
-          `Falha ao salvar as Apostas das Rodadas. Motivo: ${error.message}`
-        );
-      } else {
-        throw error;
-      }
-    });
+    );
   }
 }

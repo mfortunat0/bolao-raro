@@ -1,7 +1,7 @@
 export default class Time {
   protected readonly id: number;
-  protected readonly nome: string;
-  protected readonly estado: string;
+  protected nome: string;
+  protected estado: string;
 
   public constructor(id: number, nome: string, estado: string) {
     this.id = id;
@@ -13,11 +13,19 @@ export default class Time {
     return this.nome;
   }
 
+  public setNome(nome: string) {
+    this.nome = nome;
+  }
+
   public getId(): number {
     return this.id;
   }
 
   public getEstado(): string {
     return this.estado;
+  }
+
+  public setEstado(estado: string) {
+    this.estado = estado;
   }
 }

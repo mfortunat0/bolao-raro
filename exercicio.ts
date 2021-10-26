@@ -67,7 +67,7 @@ async function teste(login: Login, numeroRodada: number, palpites: Palpite[]) {
   const rodada = await rodadaRepository.findByNumeroRodada(numeroRodada);
 
   // listar times para fazer join com os dados das rodadas
-  const times = await timesRepository.findAll();
+  const times = timesRepository.findAll();
 
   // constroí objeto com as apostas do jogador.
   const apostaRodada = getRodadaByPalpites(usuario, rodada, palpites);

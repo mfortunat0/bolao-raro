@@ -1,70 +1,31 @@
-import { readFile, readFileSync, writeFile, writeFileSync } from "fs";
+import { writeFile, readFile } from "fs/promises";
 import { join } from "path";
 import Rodada from "../models/Rodada";
-import RodadasRepository, {
-  FindAllCallback,
-  SaveCallback,
-} from "./RodadasRepository";
+import RodadasRepository from "./RodadasRepository";
 
 const RODADAS_FILE_PATH = join(__dirname, "../../files/rodadas.json");
 
 export default class JSONRodadasRepository implements RodadasRepository {
-  public findAll(): Promise<Rodada[]> {
-    const fileContent: Rodada[] = JSON.parse(
-      readFileSync(RODADAS_FILE_PATH).toString()
-    ) as Rodada[];
-    return Promise.resolve(fileContent);
+  public async findAll(): Promise<Rodada[]> {
+    const fileContent: Buffer = await readFile(RODADAS_FILE_PATH);
+    const rodadas: Rodada[] = JSON.parse(fileContent.toString()) as Rodada[];
+
+    return rodadas;
   }
 
-  public findByNumeroRodada(numeroRodada: number): Promise<Rodada> {
-    const fileContent: Rodada[] = JSON.parse(
-      readFileSync(RODADAS_FILE_PATH).toString()
-    ) as Rodada[];
-    const rodada = fileContent.find(
+  public async findByNumeroRodada(numeroRodada: number): Promise<Rodada> {
+    const fileContent: Buffer = await readFile(RODADAS_FILE_PATH);
+    const rodadas: Rodada[] = JSON.parse(fileContent.toString()) as Rodada[];
+
+    const rodada = rodadas.find(
       (rodada) => rodada.getNumeroRodada() === numeroRodada
     );
-    return Promise.resolve(rodada);
+
+    return rodada;
   }
 
-  public save(rodadas: Rodada[]): void {
-    try {
-      const fileContent = JSON.stringify(rodadas);
-      writeFileSync(RODADAS_FILE_PATH, fileContent);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(
-          `Erro ao tentar escrever no arquivo ${RODADAS_FILE_PATH}, motivo ${error.message}`
-        );
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  public saveAsync(rodadas: Rodada[], callback: SaveCallback) {
+  public async save(rodadas: Rodada[]): Promise<void> {
     const fileContent = JSON.stringify(rodadas);
-    writeFile(RODADAS_FILE_PATH, fileContent, (error) => {
-      if (error) {
-        const fileError = new Error(
-          `Erro ao tentar escrever no arquivo ${RODADAS_FILE_PATH}, motivo ${error.message}`
-        );
-        callback(fileError);
-      } else {
-        console.log("Arquivo salvado!!!");
-      }
-    });
-  }
-
-  public findAllAsync(callback: FindAllCallback) {
-    readFile(RODADAS_FILE_PATH, (error, fileContent) => {
-      if (error) {
-        const fileError = new Error(
-          `Erro ao tentar ler o arquivo ${RODADAS_FILE_PATH}, motivo ${error.message}`
-        );
-        callback(fileError, null);
-      } else {
-        callback(null, JSON.parse(fileContent.toString()));
-      }
-    });
+    return await writeFile(RODADAS_FILE_PATH, fileContent);
   }
 }

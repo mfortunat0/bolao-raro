@@ -1,6 +1,6 @@
 import Time from "../models/Time";
 import TimesRepository, { FindAllCallback } from "./TimesRepository";
-import { readFile, readFileSync } from "fs";
+import { readFile } from "fs/promises";
 import { join } from "path";
 import { writeFile } from "fs/promises";
 
@@ -19,43 +19,30 @@ export default class JSONTimesRepository implements TimesRepository {
     this.timesFilePath = outrosTimes || TIMES_FILE_PATH;
   }
 
-  public findAll(): Time[] {
-    try {
-      const fileContent: Buffer = readFileSync(this.timesFilePath);
-      const timesSemClasse = JSON.parse(fileContent.toString()) as TimeFile[];
-      return timesSemClasse.map(
-        ({ id, nome, estado }) => new Time(id, nome, estado)
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Falha a carregar os times. Motivo: ${error.message}`);
-      } else {
-        throw error;
-      }
-    }
+  public async findAll(): Promise<Time[]> {
+    const fileContent: Buffer = await readFile(this.timesFilePath);
+    const times = JSON.parse(fileContent.toString()) as TimeFile[];
+    return times.map(({ id, nome, estado }) => new Time(id, nome, estado));
   }
 
-  public findAllAsync(callback: FindAllCallback) {
-    readFile(this.timesFilePath, (readFileError, fileContent: Buffer) => {
-      if (readFileError) {
-        const error = new Error(
-          `Falha ao ler o arquivo, ${this.timesFilePath}. Motivo: ${readFileError.message}`
-        );
+  public async findById(id: number): Promise<Time> {
+    const times = await this.findAll();
+    const time = times.find((time) => time.getId() === id);
+    return new Time(time.getId(), time.getNome(), time.getEstado());
+  }
 
-        callback(error, null);
-        return;
+  public async save(times: Time[]): Promise<void> {
+    return await writeFile(TIMES_FILE_PATH, JSON.stringify(times));
+  }
+
+  public async update(time: Time): Promise<void> {
+    const times = await this.findAll();
+    times.forEach((oldTime) => {
+      if (oldTime.getId() === time.getId()) {
+        oldTime.setEstado(time.getEstado());
+        oldTime.setNome(time.getNome());
       }
-
-      const timesSemClasse = JSON.parse(fileContent.toString()) as TimeFile[];
-      const timesComClasse: Time[] = timesSemClasse.map(
-        ({ id, nome, estado }) => new Time(id, nome, estado)
-      );
-
-      callback(null, timesComClasse);
     });
-  }
-
-  public save(times: Time[]) {
-    return writeFile(TIMES_FILE_PATH, JSON.stringify(times));
+    await this.save(times);
   }
 }
