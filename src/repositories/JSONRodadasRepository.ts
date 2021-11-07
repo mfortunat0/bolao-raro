@@ -26,6 +26,6 @@ export default class JSONRodadasRepository implements RodadasRepository {
 
   public async save(rodadas: Rodada[]): Promise<void> {
     const fileContent = JSON.stringify(rodadas);
-    return await writeFile(RODADAS_FILE_PATH, fileContent);
+    await writeFile(RODADAS_FILE_PATH, fileContent);
   }
 }
