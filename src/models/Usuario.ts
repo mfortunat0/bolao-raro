@@ -10,12 +10,14 @@ export type UsuarioFile = {
 export default class Usuario {
   protected nome: string;
   protected senha: string;
+  protected status: boolean;
   protected readonly email: string;
 
   public constructor(nome: string, email: string, senha: string) {
     this.nome = nome;
     this.email = email;
     this.senha = senha;
+    this.status = true;
   }
 
   public getNome(): string {
@@ -36,6 +38,14 @@ export default class Usuario {
 
   public setSenha(senha: string) {
     this.senha = senha;
+  }
+
+  getStatus() {
+    return this.status;
+  }
+
+  public setStatus(status: boolean) {
+    this.status = status;
   }
 
   public aposta(rodada: Rodada, palpites: Palpite[]): ApostaRodada {

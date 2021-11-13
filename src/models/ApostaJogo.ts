@@ -29,12 +29,15 @@ export default class ApostaJogo {
   getusuario() {
     return this.usuario;
   }
+
   getjogo() {
     return this.jogo;
   }
+
   getgolsMandante() {
     return this.golsMandante;
   }
+
   getgolsVisitante() {
     return this.golsVisitante;
   }

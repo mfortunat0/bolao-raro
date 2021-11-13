@@ -11,15 +11,16 @@ import JSONTimesRepository from "../repositories/JSONTimesRepository";
 export class BrasileiraoService {
   private readonly rodadaRepository: RodadaRepository =
     new JSONRodadasRepository();
+
   private readonly timesRepository: TimesRepository = new JSONTimesRepository();
 
-  public async saveRodada(): Promise<void> {
+  public async saveRodadas(): Promise<void> {
     const api = new BrasileiraoClient(process.env.TOKEN);
-    const { data: rodadasResponse } = await api.getRodadas(10);
+    const rodadasResponse = await api.getRodadas(10);
 
     const rodadas: Rodada[] = await Promise.all(
       rodadasResponse.map(async (rodadaResponse, indice) => {
-        const { data } = await api.getRodadaByNumeroRodada(10, indice + 1);
+        const data = await api.getRodadaByNumeroRodada(10, indice + 1);
         const jogos: Jogo[] = data.partidas.map((jogo) => {
           const mandante = new Time(
             jogo.time_mandante.time_id,
@@ -48,7 +49,7 @@ export class BrasileiraoService {
 
   public async saveTimes(): Promise<void> {
     const api = new BrasileiraoClient(process.env.TOKEN);
-    const { data } = await api.getTabela(10);
+    const data = await api.getTabela(10);
     const times: Time[] = data.map((tabela) => {
       const id = tabela.time.time_id;
       const nome = tabela.time.nome_popular;

@@ -1,8 +1,7 @@
 import Time from "../models/Time";
-import TimesRepository, { FindAllCallback } from "./TimesRepository";
-import { readFile } from "fs/promises";
+import TimesRepository from "./TimesRepository";
+import { readFile, writeFile } from "fs/promises";
 import { join } from "path";
-import { writeFile } from "fs/promises";
 
 const TIMES_FILE_PATH = join(__dirname, "../../files/times.json");
 

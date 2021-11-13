@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
 const brasileiraoApi = axios.create({
   baseURL:
@@ -36,27 +36,36 @@ export class BrasileiraoClient {
     this.token = token;
   }
 
-  async getTabela(campeonato: number): Promise<AxiosResponse<TabelaDto[]>> {
-    return await brasileiraoApi.get<TabelaDto[]>(`${campeonato}/tabela`, {
-      headers: {
-        Authorization: `bearer ${this.token}`,
-      },
-    });
+  async getTabela(campeonato: number): Promise<TabelaDto[]> {
+    const response = await brasileiraoApi.get<TabelaDto[]>(
+      `${campeonato}/tabela`,
+      {
+        headers: {
+          Authorization: `bearer ${this.token}`,
+        },
+      }
+    );
+    return response.data;
   }
 
-  async getRodadas(campeonato: number): Promise<AxiosResponse<RodadaDto[]>> {
-    return await brasileiraoApi.get<RodadaDto[]>(`${campeonato}/rodadas`, {
-      headers: {
-        Authorization: `bearer ${this.token}`,
-      },
-    });
+  async getRodadas(campeonato: number): Promise<RodadaDto[]> {
+    const response = await brasileiraoApi.get<RodadaDto[]>(
+      `${campeonato}/rodadas`,
+      {
+        headers: {
+          Authorization: `bearer ${this.token}`,
+        },
+      }
+    );
+
+    return response.data;
   }
 
   async getRodadaByNumeroRodada(
     campeonato: number,
     numeroRodada: number
-  ): Promise<AxiosResponse<RodadaDto>> {
-    return await brasileiraoApi.get<RodadaDto>(
+  ): Promise<RodadaDto> {
+    const response = await brasileiraoApi.get<RodadaDto>(
       `${campeonato}/rodadas/${numeroRodada}`,
       {
         headers: {
@@ -64,5 +73,6 @@ export class BrasileiraoClient {
         },
       }
     );
+    return response.data;
   }
 }
